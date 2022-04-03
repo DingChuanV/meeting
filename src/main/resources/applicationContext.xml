@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--不让ioc容器扫描 controller-->
+    <context:component-scan base-package="com.uin"
+                            use-default-filters="true">
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <!--=============整合mybatis==start=======================-->
+    <!--引入外部的配置文件-->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <!--配置数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <!-- 配置连接池属性 -->
+        <property name="url" value="${db.url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+        <!--ref 依赖注入 dataSource-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--起别名-->
+        <property name="typeAliasesPackage" value="com.uin.pojo"/>
+        <!--告诉mapper.xml的位置-->
+        <property name="mapperLocations">
+            <value>classpath*:com/uin/mapper/*.xml</value>
+        </property>
+    </bean>
+    <!--配置扫描Dao接口包，动态实现Dao接口，注入到spring容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="mapperScannerConfigurer">
+        <!-- 注入sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean"/>
+        <!-- 接口文件 -->
+        <property name="basePackage" value="com.uin.mapper"/>
+    </bean>
+    <!--=============整合mybatis==end=======================-->
+
+
+    <!--事务的配置-->
+    <!--事务配置3大步：第一步-->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          id="transactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--第二步-->
+    <tx:advice transaction-manager="transactionManager" id="tx-advice">
+        <tx:attributes>
+            <tx:method name="add*"/>
+            <tx:method name="insert*"/>
+            <tx:method name="delete*"/>
+            <tx:method name="update*"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--第三步-->
+    <aop:config>
+        <!--配置切点-->
+        <aop:pointcut id="pc1" expression="execution(* com.uin.service.*.*(..))"/>
+        <aop:advisor advice-ref="tx-advice" pointcut-ref="pc1"/>
+    </aop:config>
+</beans>
