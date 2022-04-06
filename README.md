@@ -1,7 +1,10 @@
 # meeting
 会议管理系统。
+
 SSM整合非常适合新手练手的DEMO。
+
 up主视频链接：https://space.bilibili.com/49484631
+
 个人博客：https://www.cnblogs.com/bearbrick0/
 
 ## 技术栈
