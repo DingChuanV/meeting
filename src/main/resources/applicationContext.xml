@@ -43,12 +43,13 @@
 
 
     <!--事务的配置-->
-    <!--事务配置3大步：第一步-->
+    <!--事务配置3大步：第一步 配置事务管理器-->
     <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
           id="transactionManager">
+        <!--引入数据源-->
         <property name="dataSource" ref="dataSource"/>
     </bean>
-    <!--第二步-->
+    <!--第二步 配置事务的切面-->
     <tx:advice transaction-manager="transactionManager" id="tx-advice">
         <tx:attributes>
             <tx:method name="add*"/>
@@ -57,7 +58,7 @@
             <tx:method name="update*"/>
         </tx:attributes>
     </tx:advice>
-    <!--第三步-->
+    <!--第三步 完成切面的切入点和织入-->
     <aop:config>
         <!--配置切点-->
         <aop:pointcut id="pc1" expression="execution(* com.uin.service.*.*(..))"/>

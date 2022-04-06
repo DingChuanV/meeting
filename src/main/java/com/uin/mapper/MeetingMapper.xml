@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uin.mapper.MeetingMapper">
+    <insert id="addMeeting" useGeneratedKeys="true" keyProperty="meetingid">
+        insert into meeting(meetingname, roomid, reservationistid, numberofparticipants,
+                            starttime, endtime, reservationtime, canceledtime, description,
+                            status)
+        values (#{meetingname}, #{roomid}, #{reservationistid}, #{numberofparticipants},
+                #{starttime}, #{endtime}, #{reservationtime}, #{canceledtime}, #{description},
+                #{status});
+    </insert>
+    <insert id="addParticipants">
+        insert into meetingparticipants(meetingid, employeeid)
+        values
+        <foreach collection="mps" item="mp" separator=",">
+            (#{meetingid},#{mp})
+        </foreach>
+    </insert>
+    <select id="getAllMeetings" resultType="com.uin.pojo.Meeting">
+        select *
+        from meeting;
+    </select>
+</mapper>

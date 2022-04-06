@@ -2,10 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.uin.mapper.DepartmentMapper">
+    <insert id="addDepartment">
+        insert into department(departmentname)
+        values (#{departmentname});
+    </insert>
+    <update id="updateDep">
+        update department
+        set departmentname=#{name}
+        where departmentid = #{id};
+    </update>
+    <delete id="deleteDep">
+        delete
+        from department
+        where departmentid = #{departmentid};
+    </delete>
 
     <select id="getDepByID" resultType="com.uin.pojo.Department">
         select *
         from meeting.department
         where departmentid = #{id};
+    </select>
+    <select id="getAllDepId" resultType="com.uin.pojo.Department">
+        select *
+        from meeting.department;
+    </select>
+    <select id="getAllDeps" resultType="com.uin.pojo.Department">
+        select *
+        from department;
+    </select>
+    <select id="getDepByUsername" resultType="com.uin.pojo.Department">
+        select *
+        from department
+        where departmentname = #{departmentname};
     </select>
 </mapper>
